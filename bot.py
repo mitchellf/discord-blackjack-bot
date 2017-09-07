@@ -14,7 +14,7 @@ async def on_ready():
     print(bot.user.id)
     print('------')
 
-game.load_records(bot)
+game.load_records(bot, 'player_records_test.json')
 
 try:
     bot.run(config.get('bot','token'))
@@ -22,6 +22,6 @@ except:
     print('Login error or invalid token in bot config file.')
     exit()
 
-game.update_records(bot)
+game.update_records(bot, 'player_records_test.json')
 with open('bot_cfg.ini','w') as cfg_file:
     config.write(cfg_file)

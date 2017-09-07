@@ -4,7 +4,7 @@ import player
 #Store player records in <player id> : Player() pairs.
 tracked_players = {}
 
-def load_records(bot):
+def load_records(bot, filename):
     """Loads player records from player_records.json
     into tracked_players.
 
@@ -13,7 +13,7 @@ def load_records(bot):
     """
     global tracked_players
     try:
-        with open('player_records.json', 'r') as f:
+        with open(filename, 'r') as f:
             data = json.load(f)
             for id in data:
                 tracked_players[id] = player.Player()
@@ -24,7 +24,7 @@ def load_records(bot):
         print('Error loading player records.')
         exit()
 
-def update_records(bot):
+def update_records(bot, filename):
     """Updates player_records.json from tracked_players
     dictionary
 
@@ -32,7 +32,7 @@ def update_records(bot):
     bot -- Bot object
     """
     data = {}
-    with open('player_records.json','w') as f:
+    with open(filename,'w') as f:
         for player in tracked_players:
             data[player] = (
                 {"score": tracked_players[player].score,
