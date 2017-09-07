@@ -2,6 +2,7 @@ import discord
 from discord.ext import commands
 import configparser
 import bot_utilities
+import game
 
 config = bot_utilities.load_config('bot_cfg_test.ini')
 bot = commands.Bot(command_prefix=commands.when_mentioned)
@@ -12,6 +13,9 @@ async def on_ready():
     print(bot.user.name)
     print(bot.user.id)
     print('------')
+
+
+game.load_records(bot)
 
 try:
     bot.run(config.get('bot','token'))
