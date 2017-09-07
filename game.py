@@ -31,6 +31,7 @@ def update_records(bot, filename):
     keyword arguments:
     bot -- Bot object
     """
+    global tracked_players
     data = {}
     with open(filename,'w') as f:
         for player in tracked_players:
