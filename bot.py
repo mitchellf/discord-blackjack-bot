@@ -1,12 +1,10 @@
 import discord
 from discord.ext import commands
 import configparser
+import bot_utilities
 
-config = configparser.ConfigParser()
-config.read('bot_cfg.ini')
-if not config.get('bot','token'):
-    raise ValueError('Missing bot token.')
-bot = commands.Bot(command_prefix=commands.when_mentioned())
+config = bot_utilities.load_config('bot_cfg_test.ini')
+bot = commands.Bot(command_prefix=commands.when_mentioned)
 
 @bot.event
 async def on_ready():
@@ -15,7 +13,11 @@ async def on_ready():
     print(bot.user.id)
     print('------')
 
-bot.run(config.get('bot','admins'))
+try:
+    bot.run(config.get('bot','token'))
+except:
+    print('Login error or invalid token in bot config file.')
+    exit()
 
-with open('bot_cfg.ini','w') as cfg_file:
+with open('bot_cfg_test.ini','w') as cfg_file:
     config.write(cfg_file)
