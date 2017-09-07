@@ -1,5 +1,7 @@
 class Player(object):
     def __init__(self):
-        self.user = None
+        self.id = ''
+        self.name = ''
+        self.discriminator = ''
         self.score = 0
         self.wins = 0

@@ -17,14 +17,18 @@ def load_records(bot, filename):
             data = json.load(f)
             for id in data:
                 tracked_players[id] = player.Player()
-                tracked_players[id].user = bot.get_user_info(id)
+                user = await bot.get_user_info(id)
+                tracked_players[id].id = id
+                tracked_players[id].name = user.name
+                tracked_players[id].discriminator = user.discriminator
                 tracked_players[id].score = data[id]["score"]
                 tracked_players[id].wins = data[id]["wins"]
+    #Need to make this more detailed/informative
     except:
         print('Error loading player records.')
         exit()
 
-def update_records(bot, filename):
+def update_records(filename):
     """Updates player_records.json from tracked_players
     dictionary
 

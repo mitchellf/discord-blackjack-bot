@@ -20,7 +20,7 @@ async def auto_update_records(filename):
     await bot.wait_until_ready()
     while not bot.is_closed:
         await asyncio.sleep(3600)
-        game.update_records(bot,filename)
+        game.update_records(filename)
 
 game.load_records(bot, 'player_records_test.json')
 bot.loop.create_task(auto_update_records('player_records_test.json'))
@@ -30,6 +30,6 @@ except:
     print('Login error or invalid token in bot config file.')
     exit()
 
-game.update_records(bot, 'player_records_test.json')
+game.update_records('player_records_test.json')
 with open('bot_cfg_test.ini','w') as cfg_file:
     config.write(cfg_file)
