@@ -5,6 +5,12 @@ import player
 tracked_players = {}
 
 def load_records(bot):
+    """Loads player records from player_records.json
+    into tracked_players.
+
+    keyword arguments:
+    bot -- Bot object
+    """
     global tracked_players
     try:
         with open('player_records.json', 'r') as f:
@@ -17,6 +23,22 @@ def load_records(bot):
     except:
         print('Error loading player records.')
         exit()
+
+def update_records(bot):
+    """Updates player_records.json from tracked_players
+    dictionary
+
+    keyword arguments:
+    bot -- Bot object
+    """
+    data = {}
+    with open('player_records.json','w') as f:
+        for player in tracked_players:
+            data[player] = (
+                {"score": tracked_players[player].score,
+                "wins": tracked_players[player].wins}
+            )
+        json.dump(data,f)
 
 class Game(object):
     pass
