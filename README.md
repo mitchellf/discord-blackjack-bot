@@ -1,5 +1,8 @@
 # Discord Blackjack Bot
 
+> ### [Add blackjack_bot to your server!](https://discordapp.com/oauth2/authorize?&client_id=355590976686784514&scope=bot&permissions=0)
+------------
+
 This is a simple [discord](https://discordapp.com/) blackjack bot made using the [discord.py](https://github.com/Rapptz/discord.py) api wrapper, the [pydealer](https://github.com/Trebek/pydealer) package, and [python](https://www.python.org/).
 
 Up to five users can play in a casino style blackjack game with the bot acting as a dealer. The game features a queue system for larger servers and records user points (i.e. chips or money) in a file for long-term play. Users are also given points periodically. This bot supports play on multiple channels at a time.

@@ -6,7 +6,10 @@ import bot_utilities
 from blackjack import Blackjack
 
 config = bot_utilities.load_config('bot_cfg.ini')
-bot = commands.Bot(command_prefix=commands.when_mentioned)
+bot = commands.Bot(
+    command_prefix=commands.when_mentioned,
+    description=config.get('bot','description')
+)
 
 @bot.event
 async def on_ready():
