@@ -20,7 +20,7 @@ async def auto_update_records(filename):
     """Updates player records json file hourly"""
     await bot.wait_until_ready()
     while not bot.is_closed:
-        await asyncio.sleep(3600)
+        await asyncio.sleep(3600.0)
         bot_utilities.update_records(filename)
 
 bot.loop.create_task(auto_update_records('player_records_test.json'))

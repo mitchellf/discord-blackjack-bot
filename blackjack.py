@@ -20,13 +20,19 @@ class Blackjack(object):
         """
         #Nested ifs since it's a long messy condition
         #Check if game in progress in user channel, then
-        #check if user is already in that game queue or ingame
+        #check if user is not already in that game queue or ingame
+        #If pass attempt add_to_tracked and add user to existing
+        #game queue
+        global ingame_channels
         if ctx.message.channel.id in ingame_channels:
-            user_id = ctx.message.author.id
-            channel_id = ctx.message.channel.id
-            if (not (user_id in ingame_channels[channel_id].queue
-                    and user_id in ingame_channels[channel_id].ingame)):
-                ingame_channels[channel_id].queue.append(user_id)
+            player = tracked_players.get(ctx.message.author.id)
+            channel_game = ingame_channels[ctx.message.channel.id]
+            if not (player in channel_game.queue
+                    and player in channel_game.ingame):
+                await self.add_to_tracked(ctx.message.author.id)
+                channel_game.queue.append(
+                    tracked_players[ctx.message.author.id]
+                )
 
     @commands.cooldown(rate=1, per=15)
     @commands.command(pass_context=True)
@@ -37,7 +43,6 @@ class Blackjack(object):
         progress in the user's current channel. Automatically adds  user to
         game queue. Command has a 15 second cooldown.
         """
-
         global tracked_players
         global ingame_channels
         #Check for game in channel
@@ -46,12 +51,14 @@ class Blackjack(object):
         ingame_channels[ctx.message.channel.id]  = (
             Game(self.bot, ctx.message.channel.id)
         )
+        await self.add_to_tracked(ctx.message.author.id)
+        #Appending was too long. Hopefully this works
         ingame_channels[ctx.message.channel.id].queue = (
-            [ctx.message.author.id]
+            [tracked_players[ctx.message.author.id]]
         )
         await ingame_channels[ctx.message.channel.id].game_loop(ctx)
-        await self.add_to_tracked(ctx.message.author.id)
         await self.bot.say('Thanks for playing!')
+        del ingame_channels[ctx.message.channel.id]
 
     async def add_to_tracked(self, id):
         """Adds player to tracked_players if not already present

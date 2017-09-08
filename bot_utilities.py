@@ -55,7 +55,6 @@ def load_config(filename):
     
     returns a valid ConfigParser() object
     """
-
     config = configparser.ConfigParser()
     try:
         with open(filename, 'r') as f:
