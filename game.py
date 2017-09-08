@@ -19,6 +19,48 @@ class Game(object):
         self.dealer.score = 2000
         self.deck = pydealer.Deck()
 
+    def deal_cards(self):
+        """Deal cards to dealer and players.
+
+        Dealer only recieves one card at this stage. This simulates the dealer
+        only showing one card.
+        """
+        self.deck.shuffle(5)
+        self.dealer.hand = self.deck.deal(1)
+        self.dealer.value = self.dealer.calculate_value()
+        for player in self.ingame:
+            if player.bet != 0:
+                player.hand = self.deck.deal(2)
+                player.value = player.calculate_value()
+
+    async def do_player_turns(self, ctx):
+        """Run through the players turns."""
+        for player in self.ingame:
+            if player.bet == 0: continue
+            game_msg = await self.bot.say(self.game_display())
+            prompt_msg = await self.bot.say(
+                ('__*{0}*__, hit or stay? Please enter \'h\' for hit '
+                'or \'s\' for stay within 10 seconds.'
+                ).format(player.name)
+            )
+            while player.value < 21 and player.hand.size < 6:
+                game_msg = await self.bot.edit_message(
+                    game_msg,
+                    self.game_display()
+                )
+                response_msg = await self.bot.wait_for_message(
+                    timeout = 10,
+                    check = (lambda message: message.author.id == player.id)
+                )
+                if (response_msg):
+                    if ((response_msg.content.strip())[0].upper() == 'H'):
+                        player.hand += self.deck.deal(1)
+                        player.value = player.calculate_value()
+                    else: break
+                else: break
+            await self.bot.delete_message(prompt_msg)
+            await self.bot.delete_message(game_msg)
+            
     def game_display(self):
         """Generates game display text"""
         return_text = ((
@@ -56,44 +98,46 @@ class Game(object):
         await asyncio.sleep(1.0)
         await self.bot.delete_message(game_msg)
         while (self.queue or self.ingame) and self.dealer.score>0:
-            #Populate ingame from queue
-            if len(self.ingame) < 5:
-                for i in range(0,min(5-len(self.ingame),len(self.queue))):
-                    self.ingame.append(self.queue.pop(0))
-            game_msg = await self.bot.say(self.game_display())
-            #Get bets from players
-            for player in self.ingame:
-                prompt_msg = await self.bot.say(
-                    ('__*{0}*__ , please enter valid bet '
-                    'amount within 10 seconds.\n'
-                    'Bets must be positive integer amounts.'
-                    ).format(player.name)
-                )
-                response_msg = await self.bot.wait_for_message(
-                    timeout = 10,
-                    #lambda to check for author since I want to avoid using
-                    #bot.get_user_info() calls
-                    check = (lambda message: message.author.id == player.id)
-                )
-                #Might be able to fit this into the lambda. Could also
-                #clean this up
-                if response_msg:
-                    try:
-                        int(response_msg.content)
-                        if (5 <= int(response_msg.content)
-                                <= min(player.score,500)):
-                            player.no_response = 0
-                            player.bet = int(response_msg.content)
-                            player.score -= player.bet
-                        else:
-                            player.no_response += 1
-                    except:
-                        player.no_response += 1
-                else:
-                    player.no_response += 1
-                await self.bot.delete_message(prompt_msg)
+            self.populate_game()
+            await self.get_bets(ctx)
+            self.deal_cards()
+            await self.do_player_turns(ctx)
             break
-        
+            
+
+    async def get_bets(self, ctx):
+        """Get bets from players."""
+        game_msg = await self.bot.say(self.game_display())
+        for player in self.ingame:
+            await self.bot.edit_message(game_msg,self.game_display())
+            prompt_msg = await self.bot.say(
+                ('__*{0}*__ , please enter valid bet '
+                'amount within 10 seconds.\n'
+                'Bets must be positive integer amounts.'
+                ).format(player.name)
+            )
+            response_msg = await self.bot.wait_for_message(
+                timeout = 11,
+                #lambda to check for author since I want to avoid using
+                #bot.get_user_info() calls
+                check = (lambda message: message.author.id == player.id)
+            )
+            #Might be able to fit this into the lambda. Could also
+            #clean this up
+            if response_msg:
+                try:
+                    int(response_msg.content)
+                    if (5 <= int(response_msg.content)
+                            <= min(player.score,500)):
+                        player.no_response = 0
+                        player.bet = int(response_msg.content)
+                        player.score -= player.bet
+                    else: player.no_response += 1
+                except: player.no_response += 1
+            else: player.no_response += 1
+            await self.bot.delete_message(prompt_msg)
+        await self.bot.delete_message(game_msg)
+
     def hand_display(self, hand):
         """Returns text card display for hand
 
@@ -112,5 +156,11 @@ class Game(object):
             else:
                 rank = card.value
             return_text += '| {0:2.2} {1} | '.format(rank,suit)
-
         return return_text
+
+    def populate_game(self):
+        """Populate ingame from queue"""
+        if len(self.ingame) < 5:
+            for i in range(0,min(5-len(self.ingame),len(self.queue))):
+                self.ingame.append(self.queue.pop(0))
+        

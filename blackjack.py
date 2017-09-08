@@ -34,6 +34,15 @@ class Blackjack(object):
                     tracked_players[ctx.message.author.id]
                 )
 
+    @commands.cooldown(rate=1, per=5)
+    @commands.command(pass_context=True)
+    async def leave(self, ctx)
+    if ctx.message.channel.id in ingame_channels:
+        player = tracked_players.get(ctx.message.author.id)
+        if player:
+            player.request_leave = True
+        
+
     @commands.cooldown(rate=1, per=15)
     @commands.command(pass_context=True)
     async def start(self, ctx):
