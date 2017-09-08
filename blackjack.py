@@ -10,6 +10,21 @@ class Blackjack(object):
     def __init__(self,bot):
         self.bot = bot
 
+    async def add_to_tracked(self, id):
+        """Adds player to tracked_players if not already present
+
+        keyword arguments:
+        id -- str, id of user to add to tracked_players
+        """
+        global tracked_players
+        if not tracked_players.get(id):
+            user =  await self.bot.get_user_info(id)
+            tracked_players[id] = Player(
+                id, user.name, str(user.discriminator)
+            )
+            tracked_players[id].score = 200
+            tracked_players[id].wins = 0
+
     @commands.cooldown(rate=1, per=10)
     @commands.command(pass_context=True)
     async def join(self, ctx):
@@ -79,17 +94,17 @@ class Blackjack(object):
         await self.bot.say('Thanks for playing!')
         del ingame_channels[ctx.message.channel.id]
 
-    async def add_to_tracked(self, id):
-        """Adds player to tracked_players if not already present
+    @commands.command(pass_context=True)
+    async def stats(self,ctx):
+        """Get blackjack stats.
 
-        keyword arguments:
-        id -- str, id of user to add to tracked_players
+        Provides simple blackjack starts for users who have
+        played in at least one blackjack game.
         """
-        global tracked_players
-        if not tracked_players.get(id):
-            user =  await self.bot.get_user_info(id)
-            tracked_players[id] = Player(
-                id, user.name, str(user.discriminator)
-            )
-            tracked_players[id].score = 200
-            tracked_players[id].wins = 0
+        if ctx.message.author.id in tracked_players:
+            msg_text = ('__*{0}*__ score: {1!s} wins: {2!s}'.format(
+                ctx.message.author.name,
+                tracked_players[ctx.message.author.id].score,
+                tracked_players[ctx.message.author.id].wins
+            ))
+            await self.bot.say(msg_text)
