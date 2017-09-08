@@ -30,7 +30,7 @@ $ pip install pydealer
 
 You can create a discord bot for your server [here](https://discordapp.com/developers/applications/me#top). Check out [this](https://discordapp.com/developers/docs/intro) and [this](https://github.com/reactiflux/discord-irc/wiki/Creating-a-discord-bot-&-getting-a-token) for more information.
 
-Clone this repository or or download [here]().
+Clone this repository or or download [here](https://github.com/mitchellf/discord-blackjack-bot/archive/master.zip).
 In the bot directory edit the `bot_cfg.ini` to add/modify:
 * ```token = <bot token>``` (required).
 * ```description = <your custom description>``` (optional).
