@@ -33,6 +33,40 @@ class Game(object):
                 player.hand = self.deck.deal(2)
                 player.value = player.calculate_value()
 
+    async def do_dealer_turn(self, ctx):
+        """Run through the dealers turn. Delays added for dramatic effect."""
+        game_msg = await self.bot.say(self.game_display())
+        #Check for all blackjack, all bust, or all no bet
+        if (any([player.value < 21 for player in self.ingame])
+                and all([player.bet != 0 for player in self.ingame])):
+            prompt_msg = await self.bot.say('Dealer turn.')
+            self.dealer.hand += self.deck.deal(1)
+            self.dealer.value = self.dealer.calculate_value()
+            game_msg = await self.bot.edit_message(
+                game_msg,
+                self.game_display()
+            )
+            await asyncio.sleep(3.0)
+            while(self.dealer.value < 17):
+                prompt_msg = await self.bot.edit_message(
+                    prompt_msg,
+                    'Dealer hits!'
+                )
+                self.dealer.hand += self.deck.deal(1)
+                self.dealer.value = self.dealer.calculate_value()
+                game_msg = await self.bot.edit_message(
+                    game_msg,
+                    self.game_display()
+                )
+                await asyncio.sleep(4.0)
+            prompt_msg = await self.bot.edit_message(
+                prompt_msg,
+                'Dealer stays.'
+            )
+            if prompt_msg:
+                await self.bot.delete_message(prompt_msg)
+        await self.bot.delete_message(game_msg)
+
     async def do_player_turns(self, ctx):
         """Run through the players turns."""
         for player in self.ingame:
@@ -60,7 +94,63 @@ class Game(object):
                 else: break
             await self.bot.delete_message(prompt_msg)
             await self.bot.delete_message(game_msg)
-            
+
+    async def endround(self, ctx):
+        """Runs end round calculation and messages."""
+        game_msg = await self.bot.say(self.game_display())
+        if self.dealer.value == 21:
+                self.dealer.status_text = '\'\'\'Got blackjack!\'\'\''
+        elif self.dealer.value > 21:
+            self.dealer.status_text = '\'\'\'Busted!\'\'\''
+        for player in self.ingame:
+            #Skip those who didn't play
+            if player.bet == 0:
+                continue
+            #Can probably clean this up
+            if player.value == 21 and self.dealer.value != 21:
+                player.status_text = '\'\'\'Got blackjack!\'\'\''
+                player.score += round(1.5*player.bet)
+                player.wins += 1
+            elif (player.value < 21 
+                    and (self.dealer.value < player.value
+                        or self.dealer.value > 21)):
+                player.status_text = '\'\'\'Won!\'\'\''
+                player.score += player.bet
+                player.wins += 1
+            elif player.value < 21 and player.value < self.dealer.value:
+                player.status_text = '\'\'\'Lost.\'\'\''
+                player.score -= player.bet
+                self.dealer.score += player.bet
+            elif player.value > 21:
+                player.status_text = '\'\'\'Busted\'\'\''
+                player.score -= player.bet
+                self.dealer.score += player.bet
+            else:
+                player.status_text = '\'\'\'Push.\'\'\''
+                player.score += player.bet
+        game_msg = await self.bot.edit_message(
+            game_msg,
+            self.game_display()
+        )
+        #Reset game related
+        self.deck += self.dealer.hand.empty(return_cards=True)
+        self.dealer.status_text = ''
+        self.dealer.value = 0
+        for player in self.ingame:
+            player.bet = 0
+            player.value = 0
+            player.status_text = ''
+            if player.hand:
+                self.deck += player.hand.empty(return_cards=True)
+            if (player.score <= 0
+                    or player.no_response >= 2
+                    or player.request_leave):
+                self.ingame.remove(player)
+                player.no_response = 0
+                player.request_leave = False
+        await asyncio.sleep(5.0)
+        await self.bot.delete_message(game_msg)
+
     def game_display(self):
         """Generates game display text"""
         return_text = ((
@@ -95,15 +185,15 @@ class Game(object):
         game_msg = await self.bot.say('Starting blackjack in 15 seconds.\n'
             'Use \'join\' command to join the queue.'
         )
-        await asyncio.sleep(1.0)
+        await asyncio.sleep(15.0)
         await self.bot.delete_message(game_msg)
         while (self.queue or self.ingame) and self.dealer.score>0:
             self.populate_game()
             await self.get_bets(ctx)
             self.deal_cards()
             await self.do_player_turns(ctx)
-            break
-            
+            await self.do_dealer_turn(ctx)
+            await self.endround(ctx)
 
     async def get_bets(self, ctx):
         """Get bets from players."""

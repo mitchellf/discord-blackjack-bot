@@ -36,14 +36,24 @@ class Blackjack(object):
 
     @commands.cooldown(rate=1, per=5)
     @commands.command(pass_context=True)
-    async def leave(self, ctx)
-    if ctx.message.channel.id in ingame_channels:
-        player = tracked_players.get(ctx.message.author.id)
-        if player:
-            player.request_leave = True
+    async def leave(self, ctx):
+        """Leave blackjack game.
+
+        Removes user from the game at the end of a blackjack round.
+        """
+        if ctx.message.channel.id in ingame_channels:
+            player = tracked_players.get(ctx.message.author.id)
+            if player:
+                player.request_leave = True
+                await self.bot.send_message(
+                    destination = ctx.message.author,
+                    content = ('You will be removed from the game '
+                                'at the end of the round.')
+                )
+
         
 
-    @commands.cooldown(rate=1, per=15)
+    @commands.cooldown(rate=1, per=10)
     @commands.command(pass_context=True)
     async def start(self, ctx):
         """Start a blackjack game.
