@@ -1,13 +1,12 @@
 # Discord Blackjack Bot
 
-> ### [Add blackjack_bot to your server!](https://discordapp.com/oauth2/authorize?&client_id=355590976686784514&scope=bot&permissions=0)
-------------
+> ### [Invite blackjack_bot!](https://discordapp.com/oauth2/authorize?client_id=355590976686784514&scope=bot&permissions=0)
 
 This is a simple [discord](https://discordapp.com/) blackjack bot made using the [discord.py](https://github.com/Rapptz/discord.py) api wrapper, the [pydealer](https://github.com/Trebek/pydealer) package, and [python](https://www.python.org/).
 
 Up to five users can play in a casino style blackjack game with the bot acting as a dealer. The game features a queue system for larger servers and records user points (i.e. chips or money) in a file for long-term play. Users are also given points periodically. This bot supports play on multiple channels at a time.
 
-This was developed mainly to expirement with python, bots, and remote hosting.
+This was developed mainly to experiment with python, bots, and remote hosting.
 
 ## Dependencies
 
@@ -33,7 +32,7 @@ $ pip install pydealer
 
 You can create a discord bot for your server [here](https://discordapp.com/developers/applications/me#top). Check out [this](https://discordapp.com/developers/docs/intro) and [this](https://github.com/reactiflux/discord-irc/wiki/Creating-a-discord-bot-&-getting-a-token) for more information.
 
-Clone this repository or or download [here](https://github.com/mitchellf/discord-blackjack-bot/archive/master.zip).
+[Clone](https://github.com/mitchellf/discord-blackjack-bot.git) this repository or [download](https://github.com/mitchellf/discord-blackjack-bot/archive/master.zip) files.
 In the bot directory edit the `bot_cfg.ini` to add/modify:
 * ```token = <bot token>``` (required).
 * ```description = <your custom description>``` (optional).
@@ -45,7 +44,7 @@ Once you have the dependencies installed and `bot_cfg.ini` properly configured, 
 ```
 $ python bot.py
 ```
-Use `@<bot_name> help` in discord for help with available commands.
+Use `@<bot_username> help` in discord for help with available commands.
 
 ## Comments
 

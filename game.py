@@ -109,13 +109,13 @@ class Game(object):
             #Can probably clean this up
             if player.value == 21 and self.dealer.value != 21:
                 player.status_text = '\'\'\'Got blackjack!\'\'\''
-                player.score += round(1.5*player.bet)
+                player.score += round(2.5*player.bet)
                 player.wins += 1
             elif (player.value < 21 
                     and (self.dealer.value < player.value
                         or self.dealer.value > 21)):
                 player.status_text = '\'\'\'Won!\'\'\''
-                player.score += player.bet
+                player.score += 2*player.bet
                 player.wins += 1
             elif player.value < 21 and player.value < self.dealer.value:
                 player.status_text = '\'\'\'Lost.\'\'\''

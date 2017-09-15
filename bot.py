@@ -29,10 +29,11 @@ async def auto_update_records(filename):
         bot_utilities.update_records(filename)
 
 async def auto_give_points():
-    """Gives points every 12 hours."""
+    """Gives points every 24 hours."""
     await bot.wait_until_ready()
     while not bot.is_closed:
-        await asyncio.sleep(43200.0)
+        #Adjust point giving period as needed
+        await asyncio.sleep(86400.0)
         bot_utilities.give_points()
 
 bot.loop.create_task(auto_update_records('player_records.json'))
