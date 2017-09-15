@@ -4,9 +4,11 @@
 
 This is a simple [discord](https://discordapp.com/) blackjack bot made using the [discord.py](https://github.com/Rapptz/discord.py) api wrapper, the [pydealer](https://github.com/Trebek/pydealer) package, and [python](https://www.python.org/).
 
-Up to five users can play in a casino style blackjack game with the bot acting as a dealer. The game features a queue system for larger servers and records user points (i.e. chips or money) in a file for long-term play. Users are also given points periodically. This bot supports play on multiple channels at a time.
+Up to five users per channel can play in a casino style blackjack game with the bot acting as a dealer. The game features a queue system for larger channels/servers and records user points (i.e. chips or money) in a file for long-term play. Users are also given points periodically. This bot supports play on multiple channels at a time.
 
 This was developed mainly to experiment with python, bots, and remote hosting.
+
+![](/sample_play.png "Example of bot interface.")
 
 ## Dependencies
 
@@ -37,6 +39,10 @@ In the bot directory edit the `bot_cfg.ini` to add/modify:
 * ```token = <bot token>``` (required).
 * ```description = <your custom description>``` (optional).
 This is added to the default help command.
+
+You may also want to edit/customize:
+* give point period in the `auto_give_points` function in `bot.py`.
+* method and class docstrings of the `Blackjack` class in `blackjack.py`.
 
 ## Usage
 

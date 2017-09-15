@@ -7,6 +7,21 @@ from global_vars import tracked_players, ingame_channels
 from game import Game
 
 class Blackjack(object):
+    """To start a blackjack game in your channel use the `start` command. You
+    can use the `join` command to join your channel's blackjack game in
+    progress. After the first 5 players join, subsequent joiners are placed in
+    the queue. In game slots are populated from the queue at the end of each
+    round.
+
+    When first joining a blackjack game the player's score is set to 200.
+    Periodically the bot gives points to players with a score less than or
+    equal to 5.
+
+    Currently players only have the ability to hit or stay in their turn.
+
+    If you have any questions, comments, or concerns open an issue at
+    github.com/mitchellf/discord-blackjack-bot
+    """
     def __init__(self,bot):
         self.bot = bot
 
@@ -32,6 +47,8 @@ class Blackjack(object):
 
         Attempts to add user to queue blackjack of a blackjack game in
         progress. Command has a 10 second cooldown.
+
+        Use the `help Blackjack` command for general Blackjack information.
         """
         #Nested ifs since it's a long messy condition
         #Check if game in progress in user channel, then
@@ -55,6 +72,8 @@ class Blackjack(object):
         """Leave blackjack game.
 
         Removes user from the game at the end of a blackjack round.
+
+        Use the `help Blackjack` command for general Blackjack information.
         """
         if ctx.message.channel.id in ingame_channels:
             player = tracked_players.get(ctx.message.author.id)
@@ -76,6 +95,8 @@ class Blackjack(object):
         Starts a new game of blackjack if there is not already a game in
         progress in the user's current channel. Automatically adds  user to
         game queue. Command has a 15 second cooldown.
+
+        Use the `help Blackjack` command for general Blackjack information.
         """
         global tracked_players
         global ingame_channels
@@ -100,6 +121,8 @@ class Blackjack(object):
 
         Provides simple blackjack starts for users who have
         played in at least one blackjack game.
+
+        Use the `help Blackjack` command for general Blackjack information.
         """
         if ctx.message.author.id in tracked_players:
             msg_text = ('__*{0}*__ score: {1!s} wins: {2!s}'.format(

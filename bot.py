@@ -45,5 +45,3 @@ except:
     print('Login error or invalid token in bot config file.')
     exit()
 bot_utilities.update_records('player_records.json')
-with open('bot_cfg.ini','w') as cfg_file:
-    config.write(cfg_file)

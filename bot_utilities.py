@@ -10,7 +10,10 @@ def give_points():
     """Gives 25 points to all players"""
     global tracked_players
     for player in tracked_players:
-        tracked_players[player].score += 25
+        if tracked_players[player].score <= 0:
+            tracked_players[player].score = 25
+        if tracked_players[player].score <= 5:
+            tracked_players[player].score += 25
 
 async def load_records(bot, filename):
     """Loads player records from player_records.json
