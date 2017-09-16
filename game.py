@@ -119,11 +119,9 @@ class Game(object):
                 player.wins += 1
             elif player.value < 21 and player.value < self.dealer.value:
                 player.status_text = '\'\'\'Lost.\'\'\''
-                player.score -= player.bet
                 self.dealer.score += player.bet
             elif player.value > 21:
                 player.status_text = '\'\'\'Busted\'\'\''
-                player.score -= player.bet
                 self.dealer.score += player.bet
             else:
                 player.status_text = '\'\'\'Push.\'\'\''
@@ -149,8 +147,6 @@ class Game(object):
                 player.no_response = 0
                 player.request_leave = False
         await asyncio.sleep(5.0)
-        ba = await self.bot.wait_for_message(author=ctx.message.author)
-        await self.bot.delete_message(ba)
         await self.bot.delete_message(game_msg)
 
     def game_display(self):
