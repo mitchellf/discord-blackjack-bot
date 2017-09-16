@@ -5,7 +5,7 @@ import configparser
 import bot_utilities
 from blackjack import Blackjack
 
-config = bot_utilities.load_config('bot_cfg.ini')
+config = bot_utilities.load_config('bot_cfg_copy.ini')
 bot = commands.Bot(
     command_prefix=commands.when_mentioned,
     description=config.get('bot','description')
@@ -36,9 +36,23 @@ async def auto_give_points():
         await asyncio.sleep(86400.0)
         bot_utilities.give_points()
 
-bot.loop.create_task(auto_update_records('player_records.json'))
-bot.loop.create_task(auto_give_points())
+#name these for the dc command. Probably a nicer way to do this than naming.
+update_task = bot.loop.create_task(auto_update_records('player_records.json'))
+give_task = bot.loop.create_task(auto_give_points())
 bot.add_cog(Blackjack(bot))
+
+@bot.command(hidden=True, pass_context=True)
+async def dc(ctx):
+    """Updates records before disconnecting bot"""
+    #May want to add in a way to shut down any games
+    #in progress
+    if ctx.message.author.id == config.get('bot','admin'):
+        bot_utilities.update_records('player_records.json')
+        update_task.cancel()
+        give_task.cancel()
+        await bot.logout()
+        print('Disconnecting bot...')
+
 try:
     bot.run(config.get('bot','token'))
 except:

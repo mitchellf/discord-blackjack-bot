@@ -70,13 +70,13 @@ def load_config(filename):
             config.read_file(f)
         if not config.get('bot','token'):
             raise ValueError
+        if not config.get('bot','admin'):
+            raise ValueError
     except (OSError, IOError, FileNotFoundError):
         print('Bot config file \'{}\' not found.'.format(filename))
         exit()
     except ValueError:
-        print('Bot token not found. Place in config file as\n'
-                'token = <bot token>'
-        )
+        print('Invalid config file.')
         exit()
 
     return config

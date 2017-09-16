@@ -37,6 +37,8 @@ You can create a discord bot for your server [here](https://discordapp.com/devel
 [Clone](https://github.com/mitchellf/discord-blackjack-bot.git) this repository or [download](https://github.com/mitchellf/discord-blackjack-bot/archive/master.zip) files.
 In the bot directory edit the `bot_cfg.ini` to add/modify:
 * ```token = <bot token>``` (required).
+* ```admin = <admin id>``` (required). 
+Designates a user to cleanly shutdown the bot.
 * ```description = <your custom description>``` (optional).
 This is added to the default help command.
 
@@ -51,6 +53,8 @@ Once you have the dependencies installed and `bot_cfg.ini` properly configured, 
 $ python bot.py
 ```
 Use `@<bot_username> help` in discord for help with available commands.
+
+As the admin specified in `bot_cfg.ini` use `@<bot_username> dc` to cleanly shutdown the bot.
 
 ## Comments
 
