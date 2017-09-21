@@ -10,15 +10,15 @@ class Blackjack(object):
     def __init__(self,bot):
         self.bot = bot
 
-    async def add_to_tracked(self, id):
+    async def add_to_tracked(self, ctx):
         """Adds player to tracked_players if not already present
 
         keyword arguments:
         id -- str, id of user to add to tracked_players
         """
         global tracked_players
-        if not tracked_players.get(id):
-            user =  await self.bot.get_user_info(id)
+        if not tracked_players.get(ctx.message.author.id):
+            user =  await ctx.server.get_member(id)
             tracked_players[id] = Player(
                 id, user.name, str(user.discriminator)
             )
@@ -40,7 +40,7 @@ class Blackjack(object):
         #game queue
         global ingame_channels
         if ctx.message.channel.id in ingame_channels:
-            await self.add_to_tracked(ctx.message.author.id)
+            await self.add_to_tracked(ctx)
             player = tracked_players.get(ctx.message.author.id)
             if player.playing:
                 return
@@ -90,7 +90,7 @@ class Blackjack(object):
         ingame_channels[ctx.message.channel.id]  = (
             Game(self.bot, ctx.message.channel.id)
         )
-        await self.add_to_tracked(ctx.message.author.id)
+        await self.add_to_tracked(ctx)
         #Appending was too long. Hopefully this works
         player = tracked_players[ctx.message.author.id]
         ingame_channels[ctx.message.channel.id].queue.append(player)
