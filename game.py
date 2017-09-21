@@ -10,12 +10,12 @@ suit_map = {'Diamonds': '\u2662',
             'Spades': '\u2664' }
 
 class Game(object):
-    def __init__(self,bot=None, channel=''):
+    def __init__(self,bot=None, server=None):
         self.bot = bot
-        self.channel = ''
+        self.server = server
         self.queue = []
         self.ingame = []
-        self.dealer = Player(self.bot.user.id,self.bot.user.name)
+        self.dealer = Player(self.bot.user.id)
         self.dealer.score = 2000
         self.deck = pydealer.Deck()
 
@@ -75,7 +75,7 @@ class Game(object):
             prompt_msg = await self.bot.say(
                 ('__*{0}*__, hit or stay? Please enter \'h\' for hit '
                 'or \'s\' for stay within 10 seconds.'
-                ).format(player.name)
+                ).format(self.server.get_member(player.id).display_name)
             )
             while player.value < 21 and player.hand.size < 6:
                 game_msg = await self.bot.edit_message(
@@ -173,7 +173,7 @@ class Game(object):
                 'bet: {2:' '>3}, score: {3:' '>11}\n'
                 '{4}\n{5}\n'
                 ).format(
-                    player.name,
+                    self.server.get_member(player.id).display_name,
                     str(player.value),
                     str(player.bet),
                     str(player.score),
@@ -208,7 +208,7 @@ class Game(object):
                 ('__*{0}*__ , please enter valid bet '
                 'amount within 10 seconds.\n'
                 'Bets must be positive integer amounts.'
-                ).format(player.name)
+                ).format(self.server.get_member(player.id).display_name)
             )
             response_msg = await self.bot.wait_for_message(
                 timeout = 11,

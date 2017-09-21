@@ -25,19 +25,15 @@ class Blackjack(object):
     def __init__(self,bot):
         self.bot = bot
 
-    async def add_to_tracked(self, ctx):
+    def add_to_tracked(self, id):
         """Adds player to tracked_players if not already present
 
         keyword arguments:
         id -- str, id of user to add to tracked_players
         """
         global tracked_players
-        id = ctx.message.author.id
         if not tracked_players.get(id):
-            user =  ctx.message.server.get_member(id)
-            tracked_players[id] = Player(
-                id, user.name, str(user.discriminator)
-            )
+            tracked_players[id] = Player(id)
             tracked_players[id].score = 200
             tracked_players[id].wins = 0
 
@@ -58,17 +54,14 @@ class Blackjack(object):
         #game queue
         global ingame_channels
         if ctx.message.channel.id in ingame_channels:
-            await self.add_to_tracked(ctx)
+            self.add_to_tracked(ctx.message.author.id)
             player = tracked_players.get(ctx.message.author.id)
             if player.playing:
                 return
             channel_game = ingame_channels[ctx.message.channel.id]
             if not (player in channel_game.queue
                     and player in channel_game.ingame):
-                await self.add_to_tracked(ctx.message.author.id)
-                channel_game.queue.append(
-                    tracked_players[ctx.message.author.id]
-                )
+                channel_game.queue.append(player)
                 player.playing = True
 
     @commands.cooldown(rate=1, per=5)
@@ -108,13 +101,13 @@ class Blackjack(object):
         #Check for game in channel
         if ctx.message.channel.id in ingame_channels:
             return
-        await self.add_to_tracked(ctx)
+        self.add_to_tracked(ctx.message.author.id)
         player = tracked_players[ctx.message.author.id]
         if player.playing:
             return
         #Add channel to ingame_channels list as a new Game() object
         ingame_channels[ctx.message.channel.id]  = (
-            Game(self.bot, ctx.message.channel.id)
+            Game(self.bot, ctx.message.server)
         )
         ingame_channels[ctx.message.channel.id].queue.append(player)
         player.playing = True
@@ -133,7 +126,7 @@ class Blackjack(object):
         """
         if ctx.message.author.id in tracked_players:
             msg_text = ('__*{0}*__ score: {1!s} wins: {2!s}'.format(
-                ctx.message.author.name,
+                ctx.message.author.display_name,
                 tracked_players[ctx.message.author.id].score,
                 tracked_players[ctx.message.author.id].wins
             ))

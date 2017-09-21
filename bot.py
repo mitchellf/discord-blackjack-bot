@@ -20,7 +20,6 @@ async def on_ready():
     print(bot.user.name)
     print(bot.user.id)
     print('------')
-    await bot_utilities.load_records(bot, record_file)
 
 #Just using sleep for these does NOT seem right.
 #Should probably be using a cronjob
@@ -42,7 +41,6 @@ async def auto_give_points():
 #name these for the dc command. Probably a nicer way to do this than naming.
 update_task = bot.loop.create_task(auto_update_records(record_file))
 give_task = bot.loop.create_task(auto_give_points())
-bot.add_cog(Blackjack(bot))
 
 @bot.command(hidden=True, pass_context=True)
 async def dc(ctx):
@@ -55,6 +53,9 @@ async def dc(ctx):
         give_task.cancel()
         await bot.logout()
         print('Disconnecting bot...')
+
+bot_utilities.load_records(bot, record_file)
+bot.add_cog(Blackjack(bot))
 
 try:
     bot.run(config.get('bot','token'))

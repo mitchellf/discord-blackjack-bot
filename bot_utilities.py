@@ -15,7 +15,7 @@ def give_points():
         if tracked_players[player].score <= 5:
             tracked_players[player].score += 25
 
-async def load_records(bot, filename):
+def load_records(bot, filename):
     """Loads player records from player_records.json
     into tracked_players.
 
@@ -28,10 +28,7 @@ async def load_records(bot, filename):
         with open(filename, 'r') as f:
             data = json.load(f)
             for id in data:
-                user =  await bot.get_user_info(id)
-                tracked_players[id] = Player(
-                    id, user.name, str(user.discriminator)
-                )
+                tracked_players[id] = Player(id)
                 tracked_players[id].score = data[id]["score"]
                 tracked_players[id].wins = data[id]["wins"]
     #Need to make this more detailed/informative
