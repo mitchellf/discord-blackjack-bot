@@ -146,6 +146,12 @@ class Game(object):
                 self.ingame.remove(player)
                 player.no_response = 0
                 player.request_leave = False
+                player.playing = False
+        for player in self.queue:
+            if player.request_leave:
+                self.queue.remove(player)
+                player.request_leave = False
+                player.playing = False
         await asyncio.sleep(5.0)
         await self.bot.delete_message(game_msg)
 

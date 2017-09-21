@@ -14,6 +14,7 @@ class Player(object):
         self.wins = 0
         self.no_response = 0
         self.request_leave = False
+        self.playing = False
 
     def calculate_value(self):
         """Calculates value of player's hand"""

@@ -30,6 +30,8 @@ $ pip install discord.py
 $ pip install pydealer
 ```
 
+As a note this was developed using the current `async` branch of `discord.py`.
+
 #### Bot
 
 You can create a discord bot for your server [here](https://discordapp.com/developers/applications/me#top). Check out [this](https://discordapp.com/developers/docs/intro) and [this](https://github.com/reactiflux/discord-irc/wiki/Creating-a-discord-bot-&-getting-a-token) for more information.
