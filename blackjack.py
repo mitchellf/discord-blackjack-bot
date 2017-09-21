@@ -86,13 +86,14 @@ class Blackjack(object):
         #Check for game in channel
         if ctx.message.channel.id in ingame_channels:
             return
+        await self.add_to_tracked(ctx)
+        player = tracked_players[ctx.message.author.id]
+        if player.playing:
+            return
         #Add channel to ingame_channels list as a new Game() object
         ingame_channels[ctx.message.channel.id]  = (
             Game(self.bot, ctx.message.channel.id)
         )
-        await self.add_to_tracked(ctx)
-        #Appending was too long. Hopefully this works
-        player = tracked_players[ctx.message.author.id]
         ingame_channels[ctx.message.channel.id].queue.append(player)
         player.playing = True
         await ingame_channels[ctx.message.channel.id].game_loop(ctx)
