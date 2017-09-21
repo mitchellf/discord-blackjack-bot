@@ -187,7 +187,7 @@ class Game(object):
         """Handles main blackjack round loop"""
         global ingame_channels
         game_msg = await self.bot.say('Starting blackjack in 15 seconds.\n'
-            'Use \'join\' command to join the queue.'
+            'Use `join` command to join the queue.'
         )
         await asyncio.sleep(15.0)
         await self.bot.delete_message(game_msg)
