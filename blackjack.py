@@ -53,6 +53,8 @@ class Blackjack(object):
         #If pass attempt add_to_tracked and add user to existing
         #game queue
         global ingame_channels
+        if ctx.message.channel.is_private:
+            return
         if ctx.message.channel.id in ingame_channels:
             self.add_to_tracked(ctx.message.author.id)
             player = tracked_players.get(ctx.message.author.id)
@@ -98,6 +100,8 @@ class Blackjack(object):
         """
         global tracked_players
         global ingame_channels
+        if ctx.message.channel.is_private:
+            return
         #Check for game in channel
         if ctx.message.channel.id in ingame_channels:
             return
