@@ -5,7 +5,10 @@ import configparser
 import bot_utilities
 from blackjack import Blackjack
 
-config = bot_utilities.load_config('bot_cfg.ini')
+config_file = 'bot_cfg.ini'
+record_file = 'player_records.json'
+
+config = bot_utilities.load_config(config_file)
 bot = commands.Bot(
     command_prefix=commands.when_mentioned,
     description=config.get('bot','description')
@@ -17,7 +20,7 @@ async def on_ready():
     print(bot.user.name)
     print(bot.user.id)
     print('------')
-    await bot_utilities.load_records(bot, 'player_records.json')
+    await bot_utilities.load_records(bot, record_file)
 
 #Just using sleep for these does NOT seem right.
 #Should probably be using a cronjob
@@ -37,7 +40,7 @@ async def auto_give_points():
         bot_utilities.give_points()
 
 #name these for the dc command. Probably a nicer way to do this than naming.
-update_task = bot.loop.create_task(auto_update_records('player_records.json'))
+update_task = bot.loop.create_task(auto_update_records(record_file))
 give_task = bot.loop.create_task(auto_give_points())
 bot.add_cog(Blackjack(bot))
 
@@ -47,7 +50,7 @@ async def dc(ctx):
     #May want to add in a way to shut down any games
     #in progress
     if ctx.message.author.id == config.get('bot','admin'):
-        bot_utilities.update_records('player_records.json')
+        bot_utilities.update_records(record_file)
         update_task.cancel()
         give_task.cancel()
         await bot.logout()
@@ -58,4 +61,4 @@ try:
 except:
     print('Login error or invalid token in bot config file.')
     exit()
-bot_utilities.update_records('player_records.json')
+bot_utilities.update_records(record_file)
