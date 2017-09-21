@@ -32,8 +32,9 @@ class Blackjack(object):
         id -- str, id of user to add to tracked_players
         """
         global tracked_players
-        if not tracked_players.get(ctx.message.author.id):
-            user =  await ctx.server.get_member(id)
+        id = ctx.message.author.id
+        if not tracked_players.get(id):
+            user =  ctx.message.server.get_member(id)
             tracked_players[id] = Player(
                 id, user.name, str(user.discriminator)
             )
